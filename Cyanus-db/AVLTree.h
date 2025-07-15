@@ -1,6 +1,7 @@
 ﻿#ifndef AVLTREE_H
 #define AVLTREE_H
-
+#include <vector>
+using namespace std;
 template<typename T, typename K>
 class AVLTree {
 public:
@@ -20,6 +21,7 @@ public:
     void add(Node* node);
     void remove(const K& key);
 
+    std::vector<pair<T,K>> getAllData();
 private:
     Node* root;
 
@@ -34,6 +36,8 @@ private:
     Node* add(Node* root, Node* node);
     Node* remove(Node* root, Node* node);
     void destroy(Node* node);
+    void preOrderTraversal(Node* root, vector<pair<T, K>>& data);
+
 };
 
 #endif 

@@ -166,4 +166,21 @@ void AVLTree<T, K>::remove(const K& key) {
         root = remove(root, node);
     }
 
+
+template<typename T, typename K>
+void AVLTree<T, K>::preOrderTraversal(Node* root, vector<pair<T, K>>& data) {
+    if (!root) return;
+    data.push_back({ root->data, root->key });
+    preOrderTraversal(root->left, data);
+    preOrderTraversal(root->right, data);
+}
+
+
+template<typename T, typename K>
+vector<pair<T,K>> AVLTree<T, K>::getAllData() {
+    vector < pair<T, K> data;
+    preOrderTraversal(root, data);
+    return data;
+}
+
 template class AVLTree<int, int>;

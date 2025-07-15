@@ -7,11 +7,13 @@
 class UserManager {
 private:
 	AVLTree<User*, string> userDB; // User* - username
-	bool checkPassword(const User& user, const string& password);
+	bool checkPassword(User* user, const string& password);
 public:
 	User* getUser(const string& username);
 	bool registerUser(const string& username, const string& displayName, const string& password);
 	void removeUser(const string& username);
 	bool login(const string& username, const string& password);
+	void addUser(User* user);
+	AVLTree<User*, string> getUserDatabase();
 };
 #endif

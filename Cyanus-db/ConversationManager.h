@@ -8,9 +8,12 @@ private:
 	AVLTree<Conversation*, ll> conversationDB; //Conversation - ll(~created time)
 public:
 	void createConversation(User* owner);
+	void addConversation(Conversation* conversation);
 	Conversation* getConversation(const ll& id);
 
 	void removeConversation(const ll& id);
+
+	AVLTree<Conversation*, ll>& getConversationDatabase();
 
 	~ConversationManager();
 };

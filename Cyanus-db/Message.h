@@ -7,16 +7,24 @@
 
 class Message {
 private:
-	const User* sender;
+	User* sender;
 	string message;
 	AVLTree<string, ll> editions;
 	ll sentDate;
 	bool edited;
 
 public:
-	Message(const User& sender, const string& message);
+	Message(User* sender, const string& message);
+	Message(User* sender, const string& message, ll createdDate);
+
+	string& getMessage();
 	void change(const string& s);
+
+	User* getSender();
+	AVLTree<string, ll>& getEditions();
 	ll getSentDate();
+
+
 	~Message();
 };
 

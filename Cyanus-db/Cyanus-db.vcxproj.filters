@@ -65,10 +65,19 @@
     <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CyanusDB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="AVLTree.tpp">
       <Filter>Header Files</Filter>
+    </None>
+    <None Include="users.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="conversations.bin">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

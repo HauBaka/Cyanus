@@ -13,6 +13,20 @@ ll Utils::getCurrentTime() {
 }
 
 
+void Utils::writeString(ofstream& ofs, const string& s) {
+	int len = s.size();
+	ofs.write(reinterpret_cast<const char*>(&len), sizeof(len));
+	ofs.write(s.c_str(), len);
+}
+
+void Utils::readString(ifstream& ifs, string& s) {
+	int len;
+	ifs.read(reinterpret_cast<char*>(&len), sizeof(len));
+	s.resize(len); 
+	ifs.read(&s[0], len);
+}
+
+
 const string& Utils::hashPassword(const string& password) {
 	//Using polynomial hashing
 	const int P = 32;

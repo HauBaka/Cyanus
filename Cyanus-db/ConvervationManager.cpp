@@ -3,16 +3,22 @@
 void ConversationManager::createConversation(User* owner) {
 	string roomName = owner->getDisplayName() + "'s room";
 	Conversation* conversation = new Conversation(owner, roomName);
+	addConversation(conversation);
+}
+void ConversationManager::addConversation(Conversation* conversation) {
 	auto node = conversationDB.createNode(conversation, conversation->getCreatedDate());
 	conversationDB.add(node);
 }
-
 Conversation* ConversationManager::getConversation(const ll& id) {
 	return conversationDB.findNodeByKey(id)->data;
 }
 
 void ConversationManager::removeConversation(const ll& id) {
 	conversationDB.remove(id);	
+}
+
+AVLTree<Conversation*, ll>& ConversationManager::getConversationDatabase() {
+	return conversationDB;
 }
 
 ConversationManager::~ConversationManager() {

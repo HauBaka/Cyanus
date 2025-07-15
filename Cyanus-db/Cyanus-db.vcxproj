@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="AVLTree.h" />
     <ClInclude Include="Conversation.h" />
+    <ClInclude Include="CyanusDB.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
@@ -148,6 +149,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AVLTree.tpp" />
+    <None Include="conversations.bin" />
+    <None Include="users.bin" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
