@@ -128,11 +128,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AVLTree.cpp" />
+    <ClCompile Include="ConvervationManager.cpp" />
     <ClCompile Include="ConversationManager.h" />
+    <ClCompile Include="Conversation.cpp" />
     <ClCompile Include="Cyanus-db.cpp" />
     <ClCompile Include="CyanusDB.cpp" />
+    <ClCompile Include="Message.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="UserManager.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AVLTree.h" />
@@ -140,6 +144,7 @@
     <ClInclude Include="Message.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AVLTree.tpp" />

@@ -3,7 +3,7 @@
 
 template<typename T, typename K>
 class AVLTree {
-private:
+public:
     struct Node {
         T data;
         K key;
@@ -12,7 +12,15 @@ private:
         Node(const T& val, const K& k) : data(val), key(k), left(nullptr), right(nullptr), level(1) {}
     };
 
+    AVLTree();
+    ~AVLTree();
 
+    typename AVLTree<T, K>::Node* findNodeByKey(const K& key);
+    static Node* createNode(const T& value, const K& key);
+    void add(Node* node);
+    void remove(const K& key);
+
+private:
     Node* root;
 
     Node* rightRotate(Node* y);
@@ -26,14 +34,6 @@ private:
     Node* add(Node* root, Node* node);
     Node* remove(Node* root, Node* node);
     void destroy(Node* node);
-public:
-    AVLTree();
-    ~AVLTree();
-
-    typename AVLTree<T, K>::Node* findNodeByKey(const K& key);
-    void createNode(const T& value, const K& key);
-    void add(Node* node);
-    void remove(const K& key);
 };
 
 #endif 

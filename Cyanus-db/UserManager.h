@@ -6,15 +6,12 @@
 #include <ios>
 class UserManager {
 private:
-	AVLTree<User*, string> userDB; // User - username
-	string hashPassword(const string& password);
+	AVLTree<User*, string> userDB; // User* - username
 	bool checkPassword(const User& user, const string& password);
 public:
 	User* getUser(const string& username);
-
-	bool registerUser(const string& name, const string& password);
-	bool removeUser(const User& user);
-	string login(const string& name, const string& password);
-
+	bool registerUser(const string& username, const string& displayName, const string& password);
+	void removeUser(const string& username);
+	bool login(const string& username, const string& password);
 };
 #endif

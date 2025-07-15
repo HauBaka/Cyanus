@@ -1,9 +1,9 @@
-/**
+﻿/**
 * 
 **/
 #include <iostream>
 #include "AVLTree.h"
-
+#include <type_traits> //Check data is a pointer
 template<typename T, typename K>
 typename AVLTree<T, K>::Node* AVLTree<T, K>::rightRotate(Node* y) {
         Node* l = y->left;
@@ -119,11 +119,17 @@ typename AVLTree<T, K>::Node* AVLTree<T, K>::remove(Node* root, Node* node) {
 
 template<typename T, typename K>
 void AVLTree<T, K>::destroy(Node* node) {
-        if (!node) return;
-        destroy(node->left);
-        destroy(node->right);
-        delete node;
+    if (!node) return;
+
+    destroy(node->left);
+    destroy(node->right);
+
+    if constexpr (is_pointer<T>::value) {
+        delete node->data;
     }
+
+    delete node;
+}
     
 template<typename T, typename K>
 AVLTree<T, K>::AVLTree() {
@@ -140,10 +146,10 @@ typename AVLTree<T, K>::Node* AVLTree<T, K>::findNodeByKey(const K& key) {
     }
 
 template<typename T, typename K>
-void AVLTree<T, K>::createNode(const T& value, const K& key) {
+AVLTree<T, K>::Node* AVLTree<T, K>::createNode(const T& value, const K& key) {
         if (findNodeByKey(this->root, key)) 
             throw "AVLTree: Key already exists!\n";
-        root = add(root, new Node(value, key));
+        return new Node(value, key);
     }
 
 template<typename T, typename K>

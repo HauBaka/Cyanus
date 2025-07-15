@@ -7,13 +7,15 @@ using namespace std;
 
 class User {
 private:
-	string userName, displayName;
+	string userName, displayName, hashedPassword;
 	string password, token;
 	ll firstLogin, lastLogin;
 public:
-	string getName();
+	User(const string& userName, const string& displayName, const string& password);
+	string getUserName();
 	string getDisplayName();
-	string getHashedPassword();
+	string getHashedPassword() const;
+	void changeDisplayName(const string& newName);
 	ll getFirstLogin();
 	ll getLastLogin();
 };

@@ -11,11 +11,20 @@ private:
 	User* owner;
 	AVLTree<User*, string> members; //User - username
 	AVLTree<Message*, ll> messages; // Message - ll (~ timestamp)
+	ll createdDate;
+	string& name;
 public:
-	bool sendMessage(Message* message);
-	bool removeMessage(Message* message);
+	Conversation(User* owner, string& name);
 
-	bool addMember(User* user);
-	bool removeMember(User* user);
+	void sendMessage(Message* message);
+	void removeMessage(Message* message);
+
+	void addMember(User* user);
+	void removeMember(User* user);
+
+	ll getCreatedDate() {
+		return this->createdDate;
+	}
+	~Conversation();
 };
 #endif 

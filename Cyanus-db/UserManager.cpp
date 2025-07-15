@@ -1,9 +1,31 @@
 #include "UserManager.h"
 
-string UserManager::hashPassword(const string& password) {
+#include "Utils.h"
+using namespace std;
 
-}
 
 bool UserManager::checkPassword(const User& user, const string& password) {
-	return user.getHashedPassword() == hashPassword(password);
+	return user.getHashedPassword() == Utils::hashPassword(password);
+}
+
+User* UserManager::getUser(const string& username) {
+	auto node = userDB.findNodeByKey(username);
+	return node ? node->data : nullptr;
+}
+
+bool UserManager::registerUser(const string& username, const string& displayName, const string& password) {
+	if (userDB.findNodeByKey(username)) return 0;
+	User* user = new User(username, displayName, password);
+	AVLTree<User*, string>::Node* node = userDB.createNode(user, username);
+	userDB.add(node);
+	return 1;
+}
+
+void UserManager::removeUser(const string& username) {
+	userDB.remove(username);
+}
+
+bool UserManager::login(const string& username, const string& password) {
+	User* user = getUser(username);
+	return user && checkPassword(*user, password);
 }

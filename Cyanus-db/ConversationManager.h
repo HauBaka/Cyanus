@@ -7,9 +7,11 @@ class ConversationManager {
 private:
 	AVLTree<Conversation*, ll> conversationDB; //Conversation - ll(~created time)
 public:
-	ll createConversation(const User& owner);
+	void createConversation(User* owner);
 	Conversation* getConversation(const ll& id);
 
-	bool removeConversation(const ll& id);
+	void removeConversation(const ll& id);
+
+	~ConversationManager();
 };
 #endif
