@@ -1,42 +1,35 @@
 /**
 * 
 **/
-#include <iostream>
 #include "AVLTree.h"
 
-template<typename T, typename K>
-typename AVLTree<T, K>::Node* AVLTree<T, K>::rightRotate(Node* y) {
+class AVLTree {
+private:
+
+    Node* rightRotate(Node* y) {
         Node* l = y->left;
         y->left = l->right;
         l->right = y;
         return l;
     }
-template<typename T, typename K>
-typename AVLTree<T, K>::Node* AVLTree<T, K>::leftRotate(Node* x) {
+    Node* leftRotate(Node* x) {
         Node* r = x->right;
         x->right = r->left;
         r->left = x;
         return r;
     }
 
-template<typename T, typename K>
-int AVLTree<T,K>::getLevel(Node* node) {
+    int getLevel(Node* node) {
         return node ? node->level : 0;
     }
-
-template<typename T, typename K>
-int AVLTree<T, K>::getBalance(Node* node) {
+    int getBalance(Node* node) {
         return node ? getLevel(node->left) - getLevel(node->right) : 0;
     }
-
-template<typename T, typename K>
-void AVLTree<T, K>::updateLevel(Node* node) {
+    void updateLevel(Node* node) {
         node->level = 1 + max(getLevel(node->left), getLevel(node->right));
     }
 
-
-template<typename T, typename K>
-typename AVLTree<T, K>::Node* AVLTree<T, K>::update(Node* root) {
+    Node* update(Node* root) {
         updateLevel(root);
         int k = getBalance(root);
         if (k > 1) {
@@ -59,17 +52,13 @@ typename AVLTree<T, K>::Node* AVLTree<T, K>::update(Node* root) {
         }
         return root;
     }
-
-template<typename T, typename K>
-typename AVLTree<T, K>::Node* AVLTree<T, K>::mostLeftNode(Node* node) {
+    Node* mostLeftNode(Node* node) {
         if (!node) return nullptr;
         while (node && node->left) node = node->left;
         return node;
     }
 
-
-template<typename T, typename K>
-typename AVLTree<T, K>::Node* AVLTree<T, K>::findNodeByKey(Node* root, const K& key) {
+    Node* findNodeByKey(Node* root, const K& key) {
         if (!root) return nullptr;
         if (key == root->key) return root;
         return key > root->key ?
@@ -77,9 +66,7 @@ typename AVLTree<T, K>::Node* AVLTree<T, K>::findNodeByKey(Node* root, const K& 
             findNodeByKey(root->left, key);
     }
 
-
-template<typename T, typename K>
-typename AVLTree<T, K>::Node* AVLTree<T, K>::add(Node* root, Node* node) {
+    Node* add(Node* root, Node* node) {
         if (!root) return node;
         if (root->key < node->key) root->right = add(root->right, node);
         else if (root->key > node->key) root->left = add(root->left, node);
@@ -88,9 +75,7 @@ typename AVLTree<T, K>::Node* AVLTree<T, K>::add(Node* root, Node* node) {
         return root;
     }
 
-
-template<typename T, typename K>
-typename AVLTree<T, K>::Node* AVLTree<T, K>::remove(Node* root, Node* node) {
+    Node* remove(Node* root, Node* node) {
         if (!root) return nullptr;
         if (node->key > root->key) root->right = remove(root->right, node);
         else if (node->key < root->key) root->left = remove(root->left, node);
@@ -116,43 +101,36 @@ typename AVLTree<T, K>::Node* AVLTree<T, K>::remove(Node* root, Node* node) {
         root = update(root);
         return root;
     }
-
-template<typename T, typename K>
-void AVLTree<T, K>::destroy(Node* node) {
+    void destroy(Node* node) {
         if (!node) return;
         destroy(node->left);
         destroy(node->right);
         delete node;
     }
     
-template<typename T, typename K>
-AVLTree<T, K>::AVLTree() {
+    Node* root;
+public:
+    AVLTree() {
         root = nullptr;
     }
-template<typename T, typename K>
-AVLTree<T, K>::~AVLTree() {
+    ~AVLTree() { 
         destroy(root); 
     }
-
-template<typename T, typename K>
-typename AVLTree<T, K>::Node* AVLTree<T, K>::findNodeByKey(const K& key) {
+    Node* findNodeByKey(const K& key) {
         return findNodeByKey(root, key);
     }
 
-template<typename T, typename K>
-void AVLTree<T, K>::createNode(const T& value, const K& key) {
+    void createNode(const T& value, const K& key) {
         if (findNodeByKey(this->root, key)) 
             throw "AVLTree: Key already exists!\n";
         root = add(root, new Node(value, key));
     }
 
-template<typename T, typename K>
-void AVLTree<T, K>::add(Node* node) {
+    void add(Node* node) {
         root = add(root, node);
     }
 
-template<typename T, typename K>
-void AVLTree<T, K>::remove(const K& key) {
+    void remove(const K& key) {
         Node* node = findNodeByKey(key);
         if (!node) {
             throw "AVLTree: Key not found!\n";
@@ -160,4 +138,5 @@ void AVLTree<T, K>::remove(const K& key) {
         root = remove(root, node);
     }
 
-template class AVLTree<int, int>;
+   
+};

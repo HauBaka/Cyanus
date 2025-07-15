@@ -128,7 +128,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AVLTree.cpp" />
+    <ClCompile Include="ConversationManager.h" />
     <ClCompile Include="Cyanus-db.cpp" />
+    <ClCompile Include="CyanusDB.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="UserManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AVLTree.h" />
+    <ClInclude Include="Conversation.h" />
+    <ClInclude Include="Message.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="UserManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AVLTree.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
