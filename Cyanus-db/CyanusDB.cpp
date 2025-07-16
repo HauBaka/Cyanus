@@ -61,18 +61,19 @@ void CyanusDB::readUsers() {
 	ifs.read(reinterpret_cast<char*>(&userCount), sizeof(int));
 
 	for (int i = 0; i < userCount; ++i) {
-		string userName, displayName, hashedPassword;
+		string userName, displayName, hashedPassword, token;
 		ll firstLogin, lastLogin;
 
 		Utils::readString(ifs, userName);
 		Utils::readString(ifs, displayName);
 		Utils::readString(ifs, hashedPassword);
+		Utils::readString(ifs, token);
 		
 		ifs.read(reinterpret_cast<char*>(&firstLogin), sizeof(ll));
 		ifs.read(reinterpret_cast<char*>(&lastLogin), sizeof(ll));
 
-		User* user = new User(userName, displayName, hashedPassword, firstLogin, lastLogin);
-		
+		User* user = new User(userName, displayName, hashedPassword, firstLogin, lastLogin, token);
+
 		userMng.addUser(user);
 	}
 	cout << "[CyanusDB] Loaded " << userCount << " users from file.\n";

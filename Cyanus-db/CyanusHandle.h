@@ -20,6 +20,8 @@ public:
 
 	void handleClient(SOCKET clientSocket);
 
+	void processRequest(SOCKET clientSocket, const string& request);
+
 	CyanusDB& getDB();
 };
 

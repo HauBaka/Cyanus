@@ -86,13 +86,50 @@ void CyanusHandle::handleClient(SOCKET clientSocket) {
         if (bytesReceived <= 0) break;
 
         std::string request(buffer);
-        std::cout << "[Client] " << request << std::endl;
-
-        std::string response = "OK\n";
-        send(clientSocket, response.c_str(), response.size(), 0);
+		processRequest(clientSocket, request);
     }
 }
 
+void CyanusHandle::processRequest(SOCKET clientSocket, const string& request) {
+	int pos_1 = request.find(';'), 
+        pos_2 = request.find(';', pos_1 + 1), 
+        pos_3 = request.find(';', pos_2 + 1);
+	string category = request.substr(0, request.find(';'));
+    if (category == "LOGIN") {
+        string username = request.substr(pos_1 + 1, pos_2 - pos_1 - 1);
+        string password = request.substr(pos_2 + 1, pos_3 - pos_2 - 1);
+		string response = "401;Invalid username or password!\n";
+		cout << username << " " << password << endl;
+        if (db.userManager().login(username, password)) {
+			db.userManager().generateNewToken(username);
+            response = "200;" + db.userManager().getToken(username) +"\n";
+        }
+
+        send(clientSocket, response.c_str(), response.size(), 0);
+
+    } else if (category == "REGISTER") {
+		string username = request.substr(pos_1 + 1, pos_2 - pos_1 - 1);
+		string password = request.substr(pos_2 + 1, pos_3 - pos_2 - 1);
+		string displayName = request.substr(pos_3 + 1);
+		cout << username << " " << password << " " << displayName << endl;
+		string response = "";
+
+        if (!db.userManager().registerUser(username, password, displayName)) {
+           response = "406;User with this username is existed!\n";
+        }
+        else {
+            string token = db.userManager().generateNewToken(username);
+			response = "200;" + token + "\n";
+        }
+
+        send(clientSocket, response.c_str(), response.size(), 0);
+
+    } else {
+		string response = "400;Unknown request category: " + category + "\n";
+        std::cerr << response;
+        send(clientSocket, response.c_str(), response.size(), 0);
+	}
+}
 
 bool CyanusHandle::stop() {
     running = false;

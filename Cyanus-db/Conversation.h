@@ -13,7 +13,7 @@ private:
 	AVLTree<User*, string> members; //User - username
 	AVLTree<Message*, ll> messages; // Message - ll (~ timestamp)
 	ll& createdDate;
-	string& name;
+	string name;
 
 	void writeString(ofstream& ofs, const string& s);
 public:

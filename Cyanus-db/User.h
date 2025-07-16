@@ -8,14 +8,16 @@ using namespace std;
 
 class User {
 private:
-	string userName, displayName, hashedPassword;
+	string userName, displayName, hashedPassword, token;
 	ll firstLogin, lastLogin;
 public:
 	User(const string& userName, const string& displayName, const string& password);
-	User(const string& userName, const string& displayName, const string& hashedPassword, ll firstLogin, ll lastLogin);
+	User(const string& userName, const string& displayName, const string& hashedPassword, ll firstLogin, ll lastLogin, string& token);
 	string& getUserName();
 	string& getDisplayName();
 	string& getHashedPassword() ;
+	string& getToken();
+	void setToken(const string& token);
 	void changeDisplayName(const string& newName);
 	ll getFirstLogin();
 	ll getLastLogin();

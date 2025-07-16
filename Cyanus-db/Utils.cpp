@@ -1,7 +1,10 @@
 #include "Utils.h"
 #include <chrono>
 #include <iomanip>
+#include <random>
 #include <sstream>
+#include <sstream>
+#include <iostream>
 using namespace std;
 
 ll Utils::getCurrentTime() {
@@ -27,7 +30,7 @@ void Utils::readString(ifstream& ifs, string& s) {
 }
 
 
-const string& Utils::hashPassword(const string& password) {
+const string Utils::hashPassword(const string& password) {
 	//Using polynomial hashing
 	const int P = 32;
 	const long long M = 1e9 + 97;
@@ -39,4 +42,20 @@ const string& Utils::hashPassword(const string& password) {
 	stringstream ss;
 	ss << hex << setw(16) << setfill('0') << hashValue;
 	return ss.str();
+}
+
+string Utils::generateToken() {
+	const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	random_device rd;
+	mt19937 generator(rd());
+	uniform_int_distribution<> distribution(0, characters.size() - 1);
+
+	int len = 64;
+	string token;
+	token.reserve(len);
+	for (int i = 0; i < len; ++i) {
+		token += characters[distribution(generator)];
+	}
+	std::cout << token << std::endl;
+	return token;
 }

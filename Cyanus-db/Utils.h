@@ -7,7 +7,8 @@ using namespace std;
 class Utils {
 public:
 	static ll getCurrentTime();
-	static const string& hashPassword(const string& password);
+	static const string hashPassword(const string& password);
+	static string generateToken();
 	static void writeString(ofstream& ofs, const string& s);
 	static void readString(ifstream& ifs, string& s);
 };

@@ -132,7 +132,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AVLTree.cpp" />
     <ClCompile Include="ConvervationManager.cpp" />
     <ClCompile Include="ConversationManager.h" />
     <ClCompile Include="Conversation.cpp" />
