@@ -18,6 +18,11 @@ void CyanusDB::load() {
 	readConversations();
 }
 
+CyanusDB::~CyanusDB()
+{
+	save();
+}
+
 void CyanusDB::saveUsers() {
 	ofstream ofs("users.bin", ios::binary);
 	vector<pair<User*, string>> users = userMng.getUserDatabase().getAllData();
@@ -44,7 +49,13 @@ void CyanusDB::saveConversations() {
 }
 
 void CyanusDB::readUsers() {
-	ifstream ifs("users.bin", ios::binary);
+	ifstream ifs("users.bin", ios::binary | ios::ate);
+	if (ifs.tellg() == 0) {
+		cout << "[CyanusDB] No users found in file.\n";
+		return;
+	}
+	ifs.seekg(0);
+
 
 	int userCount;
 	ifs.read(reinterpret_cast<char*>(&userCount), sizeof(int));
@@ -64,12 +75,19 @@ void CyanusDB::readUsers() {
 		
 		userMng.addUser(user);
 	}
-
+	cout << "[CyanusDB] Loaded " << userCount << " users from file.\n";
 	ifs.close();
 }
 
 void CyanusDB::readConversations() {
-	ifstream ifs("conversations.bin", ios::binary);
+	ifstream ifs("conversations.bin", ios::binary | ios::ate);
+	if (ifs.tellg() == 0) {
+		cout << "[CyanusDB] No conversations found in file.\n";
+		return;
+	}
+	ifs.seekg(0);
+
+
 	int conversationCount;
 	ifs.read(reinterpret_cast<char*>(&conversationCount), sizeof(int));
 
@@ -125,4 +143,5 @@ void CyanusDB::readConversations() {
 		}
 		conversationMng.addConversation(conversation);
 	}
+	cout << "[CyanusDB] Loaded " << conversationCount << " conversations from file.\n";
 }

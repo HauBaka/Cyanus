@@ -5,6 +5,7 @@
 #include "ConversationManager.h"
 class CyanusDB {
 private:
+	//Database for users and conversations
 	UserManager userMng;
 	ConversationManager conversationMng;
 
@@ -21,5 +22,7 @@ public:
 
 	void save();
 	void load();
+
+	~CyanusDB();
 };
 #endif

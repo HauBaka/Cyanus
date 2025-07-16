@@ -2,6 +2,7 @@
 #define AVLTREE_H
 #include <vector>
 using namespace std;
+
 template<typename T, typename K>
 class AVLTree {
 public:
@@ -17,7 +18,8 @@ public:
     ~AVLTree();
 
     typename AVLTree<T, K>::Node* findNodeByKey(const K& key);
-    static Node* createNode(const T& value, const K& key);
+    //static Node* createNode(const T& value, const K& key);
+    typename AVLTree<T, K>::Node* createNode(const T& value, const K& key);
     void add(Node* node);
     void remove(const K& key);
 
@@ -40,4 +42,7 @@ private:
 
 };
 
+#include "AVLTree.tpp"
+
 #endif 
+

@@ -1,8 +1,9 @@
 #include "ConversationManager.h"
-
+#include "Utils.h"
 void ConversationManager::createConversation(User* owner) {
 	string roomName = owner->getDisplayName() + "'s room";
-	Conversation* conversation = new Conversation(owner, roomName);
+	ll currentTime = Utils::getCurrentTime();
+	Conversation* conversation = new Conversation(owner, roomName, currentTime);
 	addConversation(conversation);
 }
 void ConversationManager::addConversation(Conversation* conversation) {
