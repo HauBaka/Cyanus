@@ -5,7 +5,7 @@
 #include <thread>
 #include <iostream>
 #pragma comment(lib, "ws2_32.lib")  
-CyanusHandle::CyanusHandle(CyanusDB& database) : db(database), port(6969) {}
+CyanusHandle::CyanusHandle(CyanusDB& database, const int port) : db(database), port(port) {}
 
 CyanusHandle::~CyanusHandle() {
     stop();
@@ -14,7 +14,7 @@ CyanusHandle::~CyanusHandle() {
 }
 
 bool CyanusHandle::start() {
-	return start(6969); // Default port
+	return start(port); // Default port
 }
 
 bool CyanusHandle::start(const int port) {

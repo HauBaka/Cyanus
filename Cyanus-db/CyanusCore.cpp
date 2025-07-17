@@ -19,8 +19,8 @@ int main() {
 	db.load();
 	globalDB = &db;
 	signal(SIGINT, handleCtrlC);
-	CyanusHandle handle(db);
-	handle.start(6969); // Start server on port 6969
+	CyanusHandle handle(db, 6969);
+	handle.start(); 
 
 	db.save();
 }

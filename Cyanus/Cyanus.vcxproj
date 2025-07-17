@@ -127,8 +127,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CommandInput.cpp" />
+    <ClCompile Include="ConversationPanel.cpp" />
     <ClCompile Include="Cyanus.cpp" />
+    <ClCompile Include="DrawingUtils.cpp" />
+    <ClCompile Include="FriendsPanel.cpp" />
     <ClCompile Include="terminalUtils.cpp" />
+    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UserPanel.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommandInput.h" />
+    <ClInclude Include="ConversationPanel.h" />
+    <ClInclude Include="DrawingUtils.h" />
+    <ClInclude Include="FriendsPanel.h" />
+    <ClInclude Include="terminalUtils.h" />
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UserPanel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -12,7 +12,7 @@ private:
 	SOCKET serverSocket; 
 	bool running;         
 public:
-	CyanusHandle(CyanusDB& database);
+	CyanusHandle(CyanusDB& database, const int port);
 	~CyanusHandle();
 	bool start(const int port);
 	bool start();
