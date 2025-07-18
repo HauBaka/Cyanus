@@ -6,7 +6,7 @@ class ConversationPanel {
 private:
 	string input;
 public:
-	void setInput(string& newInput);
+	void addInput(char c);
 	string& getInput();
 	void draw();
 	void update();

@@ -4,19 +4,19 @@
 Message::Message(User* sender, const string& message) {
 	this->sender = sender;
 	this->message = message;
-	this->sentDate = Utils::getCurrentTime();
+	this->id = Utils::getCurrentTime();
 	this->edited = false;
 
-	auto node = editions.createNode(this->message, this->sentDate);
+	auto node = editions.createNode(this->message, this->id);
 	editions.add(node);
 }
 
 Message::Message(User* sender, const string& message, ll createdDate) {
 	this->sender = sender;
 	this->message = message;
-	this->sentDate = createdDate;
+	this->id = createdDate;
 	this->edited = false;
-	auto node = editions.createNode(this->message, this->sentDate);
+	auto node = editions.createNode(this->message, this->id);
 	editions.add(node);
 }
 
@@ -40,8 +40,8 @@ void Message::change(const string& s) {
 }
 
 
-ll Message::getSentDate() {
-	return this->sentDate;
+ll Message::getID() {
+	return this->id;
 }
 
 

@@ -6,19 +6,24 @@ using namespace std;
 
 int main() {
     TerminalUtils::SetUpWindow();
-    //out << u8"🌀 â ă đ ê ô ơ \n";
-   /* for (int i = 0; i < 40; i++) {
-        cout << i+1 << "\n";
-	}*/
 
 	UIManager uiManager;
     uiManager.drawUI();
+
     while (true) {
         if (_kbhit()) {
-            char input = _getch();
-			cout << "You pressed: " << input << endl;
-        }
 
-    }
+            char input = _getch();
+
+            switch (input) {
+                case 9:
+                    uiManager.switchInput();
+				    break;
+                default:
+					uiManager.addToInput(input);
+
+            }
+		}
+	}
     return 0;
 }

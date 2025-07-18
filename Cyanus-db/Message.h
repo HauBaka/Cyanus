@@ -10,19 +10,19 @@ private:
 	User* sender;
 	string message;
 	AVLTree<string, ll> editions;
-	ll sentDate;
+	ll id;
 	bool edited;
 
 public:
 	Message(User* sender, const string& message);
-	Message(User* sender, const string& message, ll createdDate);
+	Message(User* sender, const string& message, ll id);
 
 	string& getMessage();
 	void change(const string& s);
 
 	User* getSender();
 	AVLTree<string, ll>& getEditions();
-	ll getSentDate();
+	ll getID();
 
 
 	~Message();

@@ -2,15 +2,25 @@
 
 
 void ConversationPanel::draw() {
-	// Drawing logic for the conversation panel
-	// This could include drawing the conversation history, input box, etc.
+	
 }
 void ConversationPanel::update() {
 	// Update logic for the conversation panel
 	// This could include refreshing the conversation history, handling input, etc.
 }
-void ConversationPanel::setInput(string& newInput) {
-	input = newInput;
+void ConversationPanel::addInput(char c) {
+	if (c == 127) {
+		if (!input.empty()) {
+			input.pop_back();
+		}
+	} else if (c == 13) { 
+		execute(); 
+		input.clear(); 
+	}
+	else {
+		input += c;
+	}
+	draw();
 }
 string& ConversationPanel::getInput() {
 	return input;

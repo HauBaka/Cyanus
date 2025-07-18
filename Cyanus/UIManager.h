@@ -4,18 +4,22 @@
 #include "UserPanel.h"
 #include "ConversationPanel.h"
 #include "CommandInput.h"
+
+enum InputType {
+	COMMAND_INPUT,
+	CONVERSATION_INPUT
+};
+
 class UIManager {
 private:
 	FriendsPanel friendsPanel;
 	UserPanel userPanel;
 	ConversationPanel conversationPanel;
 	CommandInput commandInput;
-	void drawBorder();
+	void init();
+	InputType currentInputType;
 public:
-	enum InputType {
-		COMMAND_INPUT,
-		CONVERSATION_INPUT
-	};
+	UIManager();
 
 	void drawUI();
 	void update();
@@ -23,6 +27,10 @@ public:
 	std::string& getConversationInput();
 	std::string& getCommandInput();
 
-	void setInput(InputType type, std::string& input, bool execute);
+	void switchInput();
+
+	void executeInput();
+
+	void addToInput(char c);
 };
 #endif

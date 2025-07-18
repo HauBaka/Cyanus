@@ -1,7 +1,7 @@
 #include "Conversation.h"
 #include "Utils.h"
 Conversation::Conversation(User* owner, string& name, ll& createdDate) : 
-	owner(owner), name(name), createdDate(createdDate){}
+	owner(owner), name(name), id(createdDate){}
 
 void Conversation::sendMessage(Message* message) {
 	addMessage(message);
@@ -12,7 +12,7 @@ void Conversation::addMessage(Message* message) {
 	messages.add(node);
 }
 void Conversation::removeMessage(Message* message) {
-	messages.remove(message->getSentDate());
+	messages.remove(message->getID());
 	//send packet...
 }
 
@@ -58,8 +58,9 @@ void Conversation::save(ofstream& ofs) {
 	*/
 	writeString(ofs, owner->getUserName());
 	writeString(ofs, name);
-	ofs.write(reinterpret_cast<char*>(&createdDate), sizeof(ll));
+	ofs.write(reinterpret_cast<char*>(&id), sizeof(ll));
 
+	//Write members
 	vector<pair<User*, string>> memberData = members.getAllData();
 	int memberCount = memberData.size();
 	ofs.write(reinterpret_cast<char*>(&memberCount), sizeof(int));
@@ -68,20 +69,21 @@ void Conversation::save(ofstream& ofs) {
 		writeString(ofs, memberData[i].second);
 	}
 
+	//Write messages
 	vector<pair<Message*, ll>> messageData = messages.getAllData();
 	int messageCount = messageData.size();
 	ofs.write(reinterpret_cast<char*>(&messageCount), sizeof(int));
 
 	for (int i = 0; i < messageCount; ++i) {
-		ll key = messageData[i].second;
-		Message* message = messageData[i].first;
+		ll msgID = messageData[i].second;
+		Message* msg = messageData[i].first;
 
-		ofs.write(reinterpret_cast<char*>(&key), sizeof(ll));
-		writeString(ofs, message->getMessage());
-		writeString(ofs, message->getSender()->getUserName());
+		ofs.write(reinterpret_cast<char*>(&msgID), sizeof(ll));
+		writeString(ofs, msg->getMessage());
+		writeString(ofs, msg->getSender()->getUserName());
 		
 		
-		vector<pair<string, ll>> edits = message->getEditions().getAllData();
+		vector<pair<string, ll>> edits = msg->getEditions().getAllData();
 		int editCount = edits.size();
 		ofs.write(reinterpret_cast<char*>(&editCount), sizeof(int));
 

@@ -19,9 +19,23 @@ bool UserManager::registerUser(const string& username, const string& displayName
 	addUser(user);
 	return 1;
 }
+/*
+Add a new user to the user database, token database and conversation database.
+*/
 void UserManager::addUser(User* user) {
-	AVLTree<User*, string>::Node* node = userDB.createNode(user, user->getUserName());
-	userDB.add(node);
+	userDB.add(
+		userDB.createNode(user, user->getUserName())
+	);
+
+	//generateNewToken(user->getUserName()); -> only called when user logs in
+
+	conversationDB.add(
+		conversationDB.createNode(
+			AVLTree<Conversation*, ll>(), 
+			user->getUserName()
+		)
+	);
+
 }
 AVLTree<string, string>& UserManager::getTokenDatabase()
 {
@@ -46,11 +60,13 @@ string& UserManager::getToken(const string& username)
 string& UserManager::generateNewToken(const string& username) {
 	User* user = getUser(username);
 	if (!user) throw std::runtime_error("User not found");
-	string token = Utils::generateToken();
+	
 	string& oldtoken = user->getToken();
-	if (tokenDB.findNodeByKey(oldtoken)) {
+	if (!oldtoken.empty() && tokenDB.findNodeByKey(oldtoken)) {
 		tokenDB.remove(oldtoken);
 	}
+
+	string token = Utils::generateToken();
 	while(tokenDB.findNodeByKey(token)) {
 		token = Utils::generateToken(); 
 	}
@@ -62,3 +78,8 @@ string& UserManager::generateNewToken(const string& username) {
 AVLTree<User*, string>& UserManager::getUserDatabase() {
 	return userDB;
 }
+
+AVLTree<AVLTree<Conversation*, ll>, string>& UserManager::getConversationDatabase() {
+	return conversationDB;
+}
+

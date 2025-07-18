@@ -135,6 +135,7 @@
     <ClCompile Include="terminalUtils.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UserPanel.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommandInput.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="terminalUtils.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UserPanel.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

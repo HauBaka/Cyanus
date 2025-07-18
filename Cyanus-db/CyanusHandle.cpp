@@ -86,49 +86,410 @@ void CyanusHandle::handleClient(SOCKET clientSocket) {
         if (bytesReceived <= 0) break;
 
         std::string request(buffer);
-		processRequest(clientSocket, request);
+		vector<string> args = parseRawRequest(request);
+        if (args.empty()) {
+            std::cerr << "Failed to parse request: " << request << "\n";
+            string response = "400;Invalid request format!\n";
+            send(clientSocket, response.c_str(), response.size(), 0);
+            continue;
+        }
+		// Handle the parsed request
+		handleParsedRequest(clientSocket, args);
     }
 }
 
-void CyanusHandle::processRequest(SOCKET clientSocket, const string& request) {
-	int pos_1 = request.find(';'), 
-        pos_2 = request.find(';', pos_1 + 1), 
-        pos_3 = request.find(';', pos_2 + 1);
-	string category = request.substr(0, request.find(';'));
-    if (category == "LOGIN") {
-        string username = request.substr(pos_1 + 1, pos_2 - pos_1 - 1);
-        string password = request.substr(pos_2 + 1, pos_3 - pos_2 - 1);
-		string response = "401;Invalid username or password!\n";
-		cout << username << " " << password << endl;
-        if (db.userManager().login(username, password)) {
-			db.userManager().generateNewToken(username);
-            response = "200;" + db.userManager().getToken(username) +"\n";
-        }
+vector<string> CyanusHandle::parseRawRequest(const string& request) {
 
+	vector<string> args;
+    if (request.empty()) {
+        std::cerr << "Received empty request.\n";
+        return args;
+	}
+	int prevPos = 0, curPos = request.find(';');
+    while (curPos != string::npos) {
+        args.push_back(request.substr(prevPos, curPos - prevPos));
+        prevPos = curPos + 1;
+        curPos = request.find(';', prevPos);
+	}
+    args.push_back(request.substr(prevPos)); // Add the last part after the last semicolon
+    if (args.empty()) {
+        std::cerr << "Parsed request is empty.\n";
+        return args;
+	}
+    if (args.size() < 2) {
+        std::cerr << "Invalid request format. Expected at least 2 parts.\n";
+        return args;
+    }
+	std::cout << "[CyanusDB] Received request: " << request << "\n";
+    return args;
+}
+
+void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args)
+{
+
+    string response;
+    if (args.empty()) {
+        std::cerr << "No arguments provided for request handling.\n";
+		response = "400;No arguments provided!\n";
+		send(clientSocket, response.c_str(), response.size(), 0);
+        return;
+	}
+    if (!stringToRequestType.count(args[0])) {
+        std::cerr << "Unknown request type: " << args[0] << "\n";
+        response = "400;Unknown request type!\n";
         send(clientSocket, response.c_str(), response.size(), 0);
+        return;
+    }
 
-    } else if (category == "REGISTER") {
-		string username = request.substr(pos_1 + 1, pos_2 - pos_1 - 1);
-		string password = request.substr(pos_2 + 1, pos_3 - pos_2 - 1);
-		string displayName = request.substr(pos_3 + 1);
-		cout << username << " " << password << " " << displayName << endl;
-		string response = "";
+	REQUEST_TYPE type = stringToRequestType.at(args[0]);
+    string username, displayName, password, token, oldPassword, newPassword, newDisplayName, newUsername, status, message, newMessage, inviteUsername, requesterUsername, conversationName;
+    ll conversationID = 0, messageID = 0;
+	switch (type) {
+	case REGISTER:
+		if (args.size() != 4) {
+			response = "400;Invalid request format!\n";
+			std::cerr << response;
+			send(clientSocket, response.c_str(), response.size(), 0);
+			return;
+		}
+		username = args[1];
+		displayName = args[2];
+		password = args[3];
+		if (!db.userManager().registerUser(username, displayName, password)) {
+			response = "406;User with this username is existed!\n";
+		}
+		else {
+			//Send success response with token
+			token = db.userManager().getToken(username);
+			response = "200;" + token + "\n";
+		}
+		break;
 
-        if (!db.userManager().registerUser(username, password, displayName)) {
-           response = "406;User with this username is existed!\n";
+	case LOGIN:
+		if (args.size() != 3) {
+			response = "400;Invalid request format!\n";
+			std::cerr << response;
+			send(clientSocket, response.c_str(), response.size(), 0);
+			return;
+		}
+		username = args[1];
+		password = args[2];
+		if (db.userManager().login(username, password)) {
+			//Generate a new token for the user
+			db.userManager().generateNewToken(username);
+			//Send success response with token
+			response = "200;" + db.userManager().getToken(username) + "\n";
+		}
+		else {
+			response = "401;Invalid username or password!\n";
+		}
+		break;
+
+	case LOGOUT:
+		if (args.size() != 2) {
+			response = "400;Invalid request format!\n";
+			std::cerr << response;
+			send(clientSocket, response.c_str(), response.size(), 0);
+			return;
+		}
+		token = args[1];
+		if (db.userManager().logout(token)) {
+			response = "200;Logout successful!\n";
+		}
+		else {
+			response = "401;Invalid token!\n";
+		}
+		break;
+
+	case DELETE_ACCOUNT:
+        if (args.size() != 2) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        if (db.userManager().deleteAccount(token)) {
+            response = "200;Account deleted successfully!\n";
         }
         else {
-            string token = db.userManager().generateNewToken(username);
-			response = "200;" + token + "\n";
+            response = "401;Invalid token!\n";
         }
+		break;
+	case CHANGE_PASSWORD:
+        if (args.size() != 4) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        oldPassword = args[2];
+        newPassword = args[3];
+        if (db.userManager().changePassword(token, oldPassword, newPassword)) {
+            response = "200;Password changed successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or password!\n";
+        }
+		break;
+    case CHANGE_DISPLAY_NAME:
+        if (args.size() != 3) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        newDisplayName = args[2];
+        if (db.userManager().changeDisplayName(token, newDisplayName)) {
+            response = "200;Display name changed successfully!\n";
+        }
+        else {
+            response = "401;Invalid token!\n";
+		}
+		break;
+     
+    case CHANGE_USERNAME:
+        if (args.size() != 3) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        newUsername = args[2];
+        if (db.userManager().changeUsername(token, newUsername)) {
+            response = "200;Username changed successfully!\n";
+        }
+        else {
+			response = "401;Invalid token or username already exists!\n";
+		}
+		break;
+	case CHANGE_STATUS:
+        if (args.size() != 3) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        status = args[2];
+        if (db.userManager().changeStatus(token, status)) {
+            response = "200;Status changed successfully!\n";
+        }
+        else {
+            response = "401;Invalid token!\n";
+        }
+		break;
+	case GET_USER_INFO:
+        if (args.size() != 2) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        username = args[1];
+        User* user = db.userManager().getUser(username);
+        if (user) {
+            response = "200;" + user->getUserName() + ";" + user->getDisplayName() + ";" + user->getStatus() + "\n";
+        }
+        else {
+            response = "404;User not found!\n";
+        }
+		break;
+        
+    case CREATE_CONVERSATION:
+        if (args.size() != 3) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationName = args[2];
+        conversationID = db.conversationManager().createConversation(token, conversationName);
+        if (conversationID != -1) {
+            response = "200;" + std::to_string(conversationID) + "\n";
+        }
+        else {
+            response = "401;Invalid token or conversation name already exists!\n";
+		}
+		break;
 
-        send(clientSocket, response.c_str(), response.size(), 0);
-
-    } else {
-		string response = "400;Unknown request category: " + category + "\n";
-        std::cerr << response;
-        send(clientSocket, response.c_str(), response.size(), 0);
+    case DELETE_CONVERSATION:
+        if (args.size() != 3) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        if (db.conversationManager().deleteConversation(token, conversationID)) {
+            response = "200;Conversation deleted successfully!\n";
+        }
+        else {
+			response = "401;Invalid token or conversation ID!\n";
+		}
+		break;
+    case INVITE_TO_CONVERSATION:
+        if (args.size() != 4) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        inviteUsername = args[3];
+        if (db.conversationManager().inviteToConversation(token, conversationID, inviteUsername)) {
+            response = "200;Invitation sent successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or conversation ID or user not found!\n";
+		}
+		break;
+    case REQUEST_TO_JOIN_CONVERSATION:
+        if (args.size() != 3) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        if (db.conversationManager().requestToJoinConversation(token, conversationID)) {
+            response = "200;Request to join conversation sent successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or conversation ID!\n";
+		}
+        break;
+    case ACCEPT_CONVERSATION_INVITATION:
+        if (args.size() != 3) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        if (db.conversationManager().acceptConversationInvitation(token, conversationID)) {
+            response = "200;Invitation accepted successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or conversation ID!\n";
+		}
+        break;
+    case ACCEPT_CONVERSATION_REQUEST:
+        if (args.size() != 4) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        requesterUsername = args[3];
+        if (db.conversationManager().acceptConversationRequest(token, conversationID, requesterUsername)) {
+            response = "200;Request accepted successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or conversation ID or user not found!\n";
+		}
+        break;
+    case LEAVE_CONVERSATION:
+        if (args.size() != 3) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        if (db.conversationManager().leaveConversation(token, conversationID)) {
+            response = "200;Left conversation successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or conversation ID!\n";
+		}
+        break;
+    case SEND_MESSAGE:
+        if (args.size() != 4) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        message = args[3];
+        if (db.conversationManager().sendMessage(token, conversationID, message)) {
+            response = "200;Message sent successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or conversation ID!\n";
+		}
+        break;
+    case EDIT_MESSAGE:
+        if (args.size() != 5) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        messageID = std::stoll(args[3]);
+        newMessage = args[4];
+        if (db.conversationManager().editMessage(token, conversationID, messageID, newMessage)) {
+            response = "200;Message edited successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or conversation ID or message ID!\n";
+        }
+        break;
+    case DELETE_MESSAGE:
+        if (args.size() != 4) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        token = args[1];
+        conversationID = std::stoll(args[2]);
+        messageID = std::stoll(args[3]);
+        if (db.conversationManager().deleteMessage(token, conversationID, messageID)) {
+            response = "200;Message deleted successfully!\n";
+        }
+        else {
+            response = "401;Invalid token or conversation ID or message ID!\n";
+		}
+        break;
+    case GET_CONVERSATION_INFO:
+        if (args.size() != 2) {
+            response = "400;Invalid request format!\n";
+            std::cerr << response;
+            send(clientSocket, response.c_str(), response.size(), 0);
+            return;
+        }
+        conversationID = std::stoll(args[1]);
+        Conversation* conversation = db.conversationManager().getConversation(conversationID);
+        if (conversation) {
+            response = "200;" + conversation->getInfo() + "\n"; // Assuming getInfo() returns a string with conversation details
+        }
+        else {
+            response = "404;Conversation not found!\n";
+		}
+		break;
+	default:
+		response = "400;Unknown request type!\n";
+		std::cerr << response;
+		break;
 	}
+
+	send(clientSocket, response.c_str(), response.size(), 0);
 }
 
 bool CyanusHandle::stop() {

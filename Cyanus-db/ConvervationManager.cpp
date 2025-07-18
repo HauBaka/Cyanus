@@ -7,7 +7,7 @@ void ConversationManager::createConversation(User* owner) {
 	addConversation(conversation);
 }
 void ConversationManager::addConversation(Conversation* conversation) {
-	auto node = conversationDB.createNode(conversation, conversation->getCreatedDate());
+	auto node = conversationDB.createNode(conversation, conversation->getID());
 	conversationDB.add(node);
 }
 Conversation* ConversationManager::getConversation(const ll& id) {

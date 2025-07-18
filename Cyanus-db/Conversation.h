@@ -12,7 +12,7 @@ private:
 	User* owner;
 	AVLTree<User*, string> members; //User - username
 	AVLTree<Message*, ll> messages; // Message - ll (~ timestamp)
-	ll& createdDate;
+	ll id;
 	string name;
 
 	void writeString(ofstream& ofs, const string& s);
@@ -28,9 +28,7 @@ public:
 	void removeMember(User* user);
 
 	string& getName();
-	ll getCreatedDate() {
-		return this->createdDate;
-	}
+	ll getID();
 
 	void save(ofstream& ofs);
 

@@ -2,7 +2,37 @@
 #define _CYANUS_HANDLE_H_
 
 #include "CyanusDB.h"
+#include <unordered_map>
+
 #include <winsock2.h> 
+
+enum REQUEST_TYPE {
+	REGISTER,//username;displayName;password
+	LOGIN,//username;password
+	LOGOUT,//token
+	DELETE_ACCOUNT,//token
+
+	CHANGE_PASSWORD,//token;oldPassword;newPassword
+	CHANGE_DISPLAY_NAME,//token;newDisplayName
+	CHANGE_USERNAME,// token;newUsername
+	CHANGE_STATUS,// token;status
+
+	GET_USER_INFO,//username
+
+	CREATE_CONVERSATION,// token;conversationName
+	DELETE_CONVERSATION,// token;conversationID
+	INVITE_TO_CONVERSATION,// token;conversationID;username
+	REQUEST_TO_JOIN_CONVERSATION,// token;conversationID
+	ACCEPT_CONVERSATION_INVITATION,// token;conversationID
+	ACCEPT_CONVERSATION_REQUEST,// token;conversationID;username
+	LEAVE_CONVERSATION,// token;conversationID
+
+	SEND_MESSAGE,// token;conversationID;message
+	EDIT_MESSAGE,// token;conversationID;messageID;newMessage
+	DELETE_MESSAGE,// token;conversationID;messageID
+
+	GET_CONVERSATION_INFO,// conversationID
+};
 
 class CyanusHandle {
 private:
@@ -20,9 +50,32 @@ public:
 
 	void handleClient(SOCKET clientSocket);
 
-	void processRequest(SOCKET clientSocket, const string& request);
-
+	vector<string> parseRawRequest(const string& request);
+	void handleParsedRequest(SOCKET clientSocket, vector<string>& args);
 	CyanusDB& getDB();
 };
 
+
+const unordered_map<string, REQUEST_TYPE> stringToRequestType = {  
+    {"REGISTER", REGISTER},  
+    {"LOGIN", LOGIN},  
+    {"LOGOUT", LOGOUT},  
+    {"DELETE_ACCOUNT", DELETE_ACCOUNT},  
+    {"CHANGE_PASSWORD", CHANGE_PASSWORD},  
+    {"CHANGE_DISPLAY_NAME", CHANGE_DISPLAY_NAME},  
+    {"CHANGE_USERNAME", CHANGE_USERNAME},  
+    {"CHANGE_STATUS", CHANGE_STATUS},  
+    {"GET_USER_INFO", GET_USER_INFO},  
+    {"CREATE_CONVERSATION", CREATE_CONVERSATION},  
+    {"DELETE_CONVERSATION", DELETE_CONVERSATION},  
+    {"INVITE_TO_CONVERSATION", INVITE_TO_CONVERSATION},  
+    {"REQUEST_TO_JOIN_CONVERSATION", REQUEST_TO_JOIN_CONVERSATION},  
+    {"ACCEPT_CONVERSATION_INVITATION", ACCEPT_CONVERSATION_INVITATION},  
+    {"ACCEPT_CONVERSATION_REQUEST", ACCEPT_CONVERSATION_REQUEST},  
+    {"LEAVE_CONVERSATION", LEAVE_CONVERSATION},  
+    {"SEND_MESSAGE", SEND_MESSAGE},  
+    {"EDIT_MESSAGE", EDIT_MESSAGE},  
+    {"DELETE_MESSAGE", DELETE_MESSAGE},  
+    {"GET_CONVERSATION_INFO", GET_CONVERSATION_INFO}  
+};
 #endif

@@ -25,7 +25,7 @@ void TerminalUtils::FixConsoleWindow() {
     MoveWindow(consoleWindow, 0, 0, 1280, 700, TRUE);
 
 	// Disable quick edit mode
-	DisableQuickEdit();
+	//DisableQuickEdit();
 	//removeConsoleScrollbars();
 }
 
@@ -88,7 +88,7 @@ void TerminalUtils::setConsoleTheme(int r, int g, int b) {
 
 void TerminalUtils::SetUpWindow() {
     FixConsoleWindow();
-    ShowConsoleCursor(false);
+    //ShowConsoleCursor(false);
     setConsoleTheme(20, 29, 57); // oceanic blue
     setCenteredTitle("CYANUS");
     SetConsoleOutputCP(CP_UTF8); // Enable UTF-8 for symbols/emojis
