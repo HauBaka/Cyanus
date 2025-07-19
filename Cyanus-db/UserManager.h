@@ -16,9 +16,10 @@ private:
 		conversationDB; // conversation tree - username 
 	bool checkPassword(User* user, const string& password);
 public:
-	User* getUser(const string& username);
+	User* getUserByName(const string& username);
+	User* getUserByToken(const string& token);
 	bool registerUser(const string& username, const string& displayName, const string& password);
-	void removeUser(const string& username);
+	bool removeUser(User* user);
 	bool login(const string& username, const string& password);
 	string& getToken(const string& username);
 	string& generateNewToken(const string& username);
@@ -26,5 +27,10 @@ public:
 	AVLTree<string, string>& getTokenDatabase();
 	AVLTree<User*, string>& getUserDatabase();
 	AVLTree<AVLTree<Conversation*, ll>, string>& getConversationDatabase();
+	bool logout(User* user);
+	bool changePassword(User* user, const string& oldPass, const string& newPass);
+	bool changeDisplayName(User* user, const string& newDisplayName);
+	bool changeUserName(User* user, const string& newUsername);
+	bool changeStatus(User* user, const string& status);
 };
 #endif

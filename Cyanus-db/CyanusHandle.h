@@ -14,35 +14,35 @@ enum REQUEST_TYPE {
 
 	CHANGE_PASSWORD,//token;oldPassword;newPassword
 	CHANGE_DISPLAY_NAME,//token;newDisplayName
-	CHANGE_USERNAME,// token;newUsername
-	CHANGE_STATUS,// token;status
+	CHANGE_USERNAME,// owner;newUsername
+	CHANGE_STATUS,// owner;status
 
 	GET_USER_INFO,//username
 
-	CREATE_CONVERSATION,// token;conversationName
-	DELETE_CONVERSATION,// token;conversationID
-	INVITE_TO_CONVERSATION,// token;conversationID;username
-	REQUEST_TO_JOIN_CONVERSATION,// token;conversationID
-	ACCEPT_CONVERSATION_INVITATION,// token;conversationID
-	ACCEPT_CONVERSATION_REQUEST,// token;conversationID;username
-	LEAVE_CONVERSATION,// token;conversationID
+	CREATE_CONVERSATION,// owner;conversationName
+	DELETE_CONVERSATION,// owner;conversationID
+	INVITE_TO_CONVERSATION,// owner;conversationID;username
+	REQUEST_TO_JOIN_CONVERSATION,// user;conversationID
+	ACCEPT_CONVERSATION_INVITATION,// user;conversationID
+	ACCEPT_CONVERSATION_REQUEST,// owner;conversationID;username
+	LEAVE_CONVERSATION,// user;conversationID
 
-	SEND_MESSAGE,// token;conversationID;message
-	EDIT_MESSAGE,// token;conversationID;messageID;newMessage
-	DELETE_MESSAGE,// token;conversationID;messageID
+	SEND_MESSAGE,// sender;conversationID;message
+	EDIT_MESSAGE,// sender;conversationID;messageID;newMessage
+	DELETE_MESSAGE,// sender;conversationID;messageID
 
 	GET_CONVERSATION_INFO,// conversationID
 };
 
 class CyanusHandle {
 private:
-	CyanusDB& db;
+	//CyanusDB& db;
 	int port;
 
 	SOCKET serverSocket; 
 	bool running;         
 public:
-	CyanusHandle(CyanusDB& database, const int port);
+	CyanusHandle(const int port);
 	~CyanusHandle();
 	bool start(const int port);
 	bool start();
@@ -52,7 +52,6 @@ public:
 
 	vector<string> parseRawRequest(const string& request);
 	void handleParsedRequest(SOCKET clientSocket, vector<string>& args);
-	CyanusDB& getDB();
 };
 
 

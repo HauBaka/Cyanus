@@ -1,7 +1,9 @@
 #include "Conversation.h"
 #include "Utils.h"
 Conversation::Conversation(User* owner, string& name, ll& createdDate) : 
-	owner(owner), name(name), id(createdDate){}
+	owner(owner), name(name), id(createdDate) {
+	addMember(owner);
+}
 
 void Conversation::sendMessage(Message* message) {
 	addMessage(message);
@@ -92,6 +94,15 @@ void Conversation::save(ofstream& ofs) {
 			writeString(ofs, edits[j].first);
 		}
 	}
+}
+
+User* Conversation::getOwner() {
+	return owner;
+}
+
+string& Conversation::getInfo()
+{
+	// TODO: insert return statement here
 }
 
 Conversation::~Conversation() {

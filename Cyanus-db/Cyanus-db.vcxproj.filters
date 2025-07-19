@@ -71,6 +71,9 @@
     <ClInclude Include="CyanusHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CyanusCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="AVLTree.tpp">

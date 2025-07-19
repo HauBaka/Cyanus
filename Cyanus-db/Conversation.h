@@ -29,6 +29,8 @@ public:
 
 	string& getName();
 	ll getID();
+	User* getOwner();
+	string& getInfo();
 
 	void save(ofstream& ofs);
 

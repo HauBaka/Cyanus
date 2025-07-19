@@ -1,5 +1,8 @@
 #include "CyanusDB.h"
 #include "Utils.h"
+CyanusDB::CyanusDB()
+{
+}
 UserManager& CyanusDB::userManager() {
 	return userMng;
 }
@@ -114,7 +117,7 @@ void CyanusDB::readConversations() {
 		Utils::readString(ifs, name);
 		ifs.read(reinterpret_cast<char*>(&conversationID), sizeof(ll));
 
-		User* owner = userMng.getUser(ownerName);
+		User* owner = userMng.getUserByName(ownerName);
 		Conversation* conversation = new Conversation(owner, name, conversationID);
 
 		//Read members
@@ -124,7 +127,7 @@ void CyanusDB::readConversations() {
 			string memberName;
 
 			Utils::readString(ifs, memberName);
-			User* member = userMng.getUser(memberName);
+			User* member = userMng.getUserByName(memberName);
 
 			if (!member) {
 				cerr << "[CyanusDB] User " << memberName << " not found in user database.\n";
@@ -155,7 +158,7 @@ void CyanusDB::readConversations() {
 			Utils::readString(ifs, msgValue);
 			Utils::readString(ifs, msgSenderName);
 
-			Message* message = new Message(userMng.getUser(msgSenderName), msgValue, msgID);
+			Message* message = new Message(userMng.getUserByName(msgSenderName), msgValue, msgID);
 
 			//Read edits
 			ifs.read(reinterpret_cast<char*>(&editCount), sizeof(int));

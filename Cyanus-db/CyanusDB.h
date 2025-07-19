@@ -17,6 +17,8 @@ private:
 
 
 public:
+	CyanusDB();
+
 	UserManager& userManager();
 	ConversationManager& conversationManager();
 

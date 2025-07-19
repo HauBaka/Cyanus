@@ -35,6 +35,12 @@ string& User::getToken()
     return token;
 }
 
+string& User::getStatus()
+{
+    string s;
+    return s;
+}
+
 void User::setToken(const string& token)
 {
     this->token = token;
@@ -43,6 +49,11 @@ void User::setToken(const string& token)
 
 void User::changeDisplayName(const string& newName) {
     displayName = newName;
+}
+
+void User::changeUsername(const string& newName)
+{
+    userName = newName;
 }
 
 
@@ -62,4 +73,9 @@ void User::save(ofstream& ofs) {
     
     ofs.write(reinterpret_cast<char*>(&firstLogin), sizeof(firstLogin));
     ofs.write(reinterpret_cast<char*>(&lastLogin), sizeof(lastLogin));
+}
+
+void User::changePassword(const string& newPass)
+{
+    hashedPassword = Utils::hashPassword(newPass);
 }

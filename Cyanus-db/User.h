@@ -17,10 +17,13 @@ public:
 	string& getDisplayName();
 	string& getHashedPassword() ;
 	string& getToken();
+	string& getStatus();
 	void setToken(const string& token);
 	void changeDisplayName(const string& newName);
+	void changeUserName(const string& newName);
 	ll getFirstLogin();
 	ll getLastLogin();
 	void save(ofstream& ofs);
+	void changePassword(const string& newPass);
 };
 #endif

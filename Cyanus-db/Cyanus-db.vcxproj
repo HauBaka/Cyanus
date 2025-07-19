@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="AVLTree.h" />
     <ClInclude Include="Conversation.h" />
+    <ClInclude Include="CyanusCore.h" />
     <ClInclude Include="CyanusDB.h" />
     <ClInclude Include="CyanusHandle.h" />
     <ClInclude Include="Message.h" />

@@ -1,26 +1,22 @@
 ﻿#define _HAS_STD_BYTE 0
+#include "CyanusCore.h"
 #include "CyanusDB.h"
 #include "CyanusHandle.h"
 #include <csignal>
 
-CyanusDB* globalDB = nullptr;
 
 void handleCtrlC(int signal) {
-	if (globalDB) {
-		std::cout << "\n[INFO] Saving database before exit...\n";
-		globalDB->save();
-	}
+	std::cout << "\n[INFO] Saving database before exit...\n";
+	CyanusCore::getInstance().getDB().save();
 	exit(0); 
 }
 
 
 int main() {
-	CyanusDB db;
-	db.load();
-	globalDB = &db;
+	CyanusCore::getInstance().getDB().load();
 	signal(SIGINT, handleCtrlC);
-	CyanusHandle handle(db, 6969);
+	CyanusHandle handle(CyanusCore::getInstance().getDB(), 6969);
 	handle.start(); 
 
-	db.save();
+	CyanusCore::getInstance().getDB().save();
 }
