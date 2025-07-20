@@ -20,6 +20,7 @@ public:
 	string& getMessage();
 	void change(const string& s);
 
+
 	User* getSender();
 	AVLTree<string, ll>& getEditions();
 	ll getID();

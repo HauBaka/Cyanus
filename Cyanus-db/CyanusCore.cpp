@@ -15,7 +15,7 @@ void handleCtrlC(int signal) {
 int main() {
 	CyanusCore::getInstance().getDB().load();
 	signal(SIGINT, handleCtrlC);
-	CyanusHandle handle(CyanusCore::getInstance().getDB(), 6969);
+	CyanusHandle handle(6969);
 	handle.start(); 
 
 	CyanusCore::getInstance().getDB().save();

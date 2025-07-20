@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "UserSocket.h"
 using namespace std;
 #define ll long long
 
@@ -10,6 +11,7 @@ class User {
 private:
 	string userName, displayName, hashedPassword, token;
 	ll firstLogin, lastLogin;
+	UserSocket userSocket; 
 public:
 	User(const string& userName, const string& displayName, const string& password);
 	User(const string& userName, const string& displayName, const string& hashedPassword, ll firstLogin, ll lastLogin, string& token);
@@ -25,5 +27,6 @@ public:
 	ll getLastLogin();
 	void save(ofstream& ofs);
 	void changePassword(const string& newPass);
+	UserSocket& getUserSocket();
 };
 #endif

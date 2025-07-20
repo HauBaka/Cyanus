@@ -1,3 +1,4 @@
+#define _HAS_STD_BYTE 0
 #include "Conversation.h"
 #include "Utils.h"
 Conversation::Conversation(User* owner, string& name, ll& createdDate) : 
@@ -34,6 +35,10 @@ void Conversation::removeMember(User* user) {
 }
 string& Conversation::getName() {
 	return name;
+}
+ll Conversation::getID()
+{
+	return this->id;
 }
 void Conversation::writeString(ofstream& ofs, const string& s) {
 	int len = s.size();
@@ -102,9 +107,11 @@ User* Conversation::getOwner() {
 
 string& Conversation::getInfo()
 {
-	// TODO: insert return statement here
+	string s;
+	return s;
 }
 
 Conversation::~Conversation() {
 	//Todo: save to file before remove trees.
 }
+

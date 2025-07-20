@@ -2,7 +2,6 @@
 #ifndef _CYANUS_CORE_H_
 #define _CYANUS_CORE_H_
 #include "CyanusDB.h"
-
 class CyanusCore {
 private:
     CyanusDB db;

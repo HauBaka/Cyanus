@@ -141,6 +141,7 @@
     <ClCompile Include="Message.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="UserManager.cpp" />
+    <ClCompile Include="UserSocket.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="Message.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
+    <ClInclude Include="UserSocket.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>

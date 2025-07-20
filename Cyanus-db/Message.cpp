@@ -39,12 +39,10 @@ void Message::change(const string& s) {
 	this->edited = true;
 }
 
-
-ll Message::getID() {
-	return this->id;
+ll Message::getID()  {
+	return id;
 }
 
 
 Message::~Message() {
-	//TODO: WRRITE EDITIONS
 }

@@ -132,6 +132,7 @@
     <ClCompile Include="Cyanus.cpp" />
     <ClCompile Include="DrawingUtils.cpp" />
     <ClCompile Include="FriendsPanel.cpp" />
+    <ClCompile Include="SocketManager.cpp" />
     <ClCompile Include="terminalUtils.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UserPanel.cpp" />
@@ -140,8 +141,10 @@
   <ItemGroup>
     <ClInclude Include="CommandInput.h" />
     <ClInclude Include="ConversationPanel.h" />
+    <ClInclude Include="Cyanus.h" />
     <ClInclude Include="DrawingUtils.h" />
     <ClInclude Include="FriendsPanel.h" />
+    <ClInclude Include="SocketManager.h" />
     <ClInclude Include="terminalUtils.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UserPanel.h" />

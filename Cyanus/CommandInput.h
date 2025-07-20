@@ -13,6 +13,7 @@ public:
 	void draw();
 	string& getInput();
 	void execute();
+	void addToLogs(const string& s);
 	void printLogs();
 };
 

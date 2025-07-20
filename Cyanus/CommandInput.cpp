@@ -8,6 +8,7 @@ void CommandInput::addInput(char c) {
 	}
 	else if (c == 13) {
 		execute();
+		addToLogs(input);	
 		input= "";
 	}
 	else {   
@@ -32,8 +33,9 @@ void CommandInput::execute() {
 
 }
 
-void CommandInput::printLogs() {
-	string log = "[" + Utils::getCurrentTimeString("%H:%M:%S") + "] 16long_user_name: " + input;
+void CommandInput::addToLogs(const string& s)
+{
+	string log = "[" + Utils::getCurrentTimeString("%H:%M:%S") + "] " + s;
 
 	//Divine log into parts which are not longer than 40 characters
 	int i = 0;
@@ -45,6 +47,10 @@ void CommandInput::printLogs() {
 	while (logs.size() > 9) {
 		logs.pop();
 	}
+}
+
+void CommandInput::printLogs() {
+
 
 	//Print the log to the console
 	int size = logs.size();

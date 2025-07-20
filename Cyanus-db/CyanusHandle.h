@@ -14,22 +14,22 @@ enum REQUEST_TYPE {
 
 	CHANGE_PASSWORD,//token;oldPassword;newPassword
 	CHANGE_DISPLAY_NAME,//token;newDisplayName
-	CHANGE_USERNAME,// owner;newUsername
-	CHANGE_STATUS,// owner;status
+	CHANGE_USERNAME,// owner's token;newUsername
+	CHANGE_STATUS,// owner's token;status
 
-	GET_USER_INFO,//username
+	GET_USER_INFO,//user's token, target username
 
-	CREATE_CONVERSATION,// owner;conversationName
-	DELETE_CONVERSATION,// owner;conversationID
-	INVITE_TO_CONVERSATION,// owner;conversationID;username
-	REQUEST_TO_JOIN_CONVERSATION,// user;conversationID
-	ACCEPT_CONVERSATION_INVITATION,// user;conversationID
-	ACCEPT_CONVERSATION_REQUEST,// owner;conversationID;username
-	LEAVE_CONVERSATION,// user;conversationID
+	CREATE_CONVERSATION,// owner's token;conversationName
+	DELETE_CONVERSATION,// owner's token;conversationID
+	INVITE_TO_CONVERSATION,// owner's token;conversationID;username
+	REQUEST_TO_JOIN_CONVERSATION,// user's token;conversationID
+	ACCEPT_CONVERSATION_INVITATION,// user's token;conversationID
+	ACCEPT_CONVERSATION_REQUEST,// owner's token;conversationID;username
+	LEAVE_CONVERSATION,// user's token;conversationID
 
-	SEND_MESSAGE,// sender;conversationID;message
-	EDIT_MESSAGE,// sender;conversationID;messageID;newMessage
-	DELETE_MESSAGE,// sender;conversationID;messageID
+	SEND_MESSAGE,// sender's token;conversationID;message
+	EDIT_MESSAGE,// sender's token;conversationID;messageID;newMessage
+	DELETE_MESSAGE,// sender's token;conversationID;messageID
 
 	GET_CONVERSATION_INFO,// conversationID
 };

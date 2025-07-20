@@ -8,6 +8,7 @@ User::User(const string& userName, const string& displayName, const string& pass
     this->hashedPassword = Utils::hashPassword(password);
     this->firstLogin = Utils::getCurrentTime();
     this->lastLogin = 0;
+    this->userSocket = UserSocket(INVALID_SOCKET);
 }
 //Add user from file
 User::User(const string& userName, const string& displayName, const string& hashedPassword, ll firstLogin, ll lastLogin, string& token) {
@@ -17,6 +18,7 @@ User::User(const string& userName, const string& displayName, const string& hash
     this->firstLogin = firstLogin;
     this->lastLogin = lastLogin;
     this->token = token;
+    this->userSocket = UserSocket(INVALID_SOCKET);
 }
 string& User::getUserName() {
     return userName;
@@ -51,7 +53,7 @@ void User::changeDisplayName(const string& newName) {
     displayName = newName;
 }
 
-void User::changeUsername(const string& newName)
+void User::changeUserName(const string& newName)
 {
     userName = newName;
 }
@@ -78,4 +80,9 @@ void User::save(ofstream& ofs) {
 void User::changePassword(const string& newPass)
 {
     hashedPassword = Utils::hashPassword(newPass);
+}
+
+UserSocket& User::getUserSocket()
+{
+    return userSocket;
 }

@@ -166,12 +166,20 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
 		password = args[3];
 		if (!userMng.registerUser(username, displayName, password)) {
 			response = "406;User with this username is existed!\n";
+            send(clientSocket, response.c_str(), response.size(), 0);
+
 		}
 		else {
 			//Send success response with token
-			token = userMng.getToken(username);
-			response = "200;" + token + "\n";
-		}
+			User* newUser = userMng.getUserByName(username);
+			response = "200;" + newUser->getToken() + "\n";
+
+			newUser->getUserSocket().setClientSocket(clientSocket);
+
+			newUser->getUserSocket().sendResponse(response);
+
+			std::cout << "[CyanusDB] User registered: " << username << "\n";
+        }
 		break;
 
 	case LOGIN:
@@ -186,11 +194,16 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
 		if (userMng.login(username, password)) {
 			//Generate a new token for the user
 			userMng.generateNewToken(username);
+			User* user = userMng.getUserByName(username);
 			//Send success response with token
-			response = "200;" + userMng.getToken(username) + "\n";
+			response = "200;" + user->getToken() + "\n";
+
+			user->getUserSocket().setClientSocket(clientSocket);
+			user->getUserSocket().sendResponse(response);
 		}
 		else {
 			response = "401;Invalid username or password!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
 		}
 		break;
 
@@ -204,9 +217,12 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
         user = userMng.getUserByToken(args[1]);
 		if (user && userMng.logout(user)) {
             response = "200;Logged out successfully!\n";
+			user->getUserSocket().sendResponse(response);
+			user->getUserSocket().setClientSocket(INVALID_SOCKET); 
         }
         else {
             response = "401;Invalid token!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
 		}
 		break;
 
@@ -220,9 +236,13 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
 		user = userMng.getUserByToken(args[1]);
         if (user && userMng.removeUser(user)) {
             response = "200;Account deleted successfully!\n";
+			user->getUserSocket().sendResponse(response);
+			delete user; 
+
         }
         else {
             response = "401;Invalid token!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
 		}
         break;
 	case CHANGE_PASSWORD:
@@ -237,9 +257,11 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
         newPassword = args[3];
         if (user && userMng.changePassword(user, oldPassword, newPassword)) {
             response = "200;Password changed successfully!\n";
+			user->getUserSocket().sendResponse(response);
         }
         else {
             response = "401;Invalid token or password!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
         }
         break;
     case CHANGE_DISPLAY_NAME:
@@ -253,9 +275,11 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
         newDisplayName = args[2];
         if (user && userMng.changeDisplayName(user, newDisplayName)) {
             response = "200;Display name changed successfully!\n";
+			user->getUserSocket().sendResponse(response);
         }
         else {
             response = "401;Invalid token or display name!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
 		}
 		break;
      
@@ -270,9 +294,11 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
         newUsername = args[2];
         if (user && userMng.changeUserName(user, newUsername)) {
             response = "200;Username changed successfully!\n";
+			user->getUserSocket().sendResponse(response);
         }
         else {
             response = "401;Invalid token or username existed!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
 		}
 		break;
 	case CHANGE_STATUS:
@@ -282,23 +308,25 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
             send(clientSocket, response.c_str(), response.size(), 0);
             return;
         }
-        User* user = userMng.getUserByToken(args[1]);
+        user = userMng.getUserByToken(args[1]);
         status = args[2];
         if (user && userMng.changeStatus(user, status)) {
             response = "200;Status changed successfully!\n";
+			user->getUserSocket().sendResponse(response);
         }
         else {
             response = "401;Invalid token or status!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
         }
 		break;
-	case GET_USER_INFO:
+	case GET_USER_INFO://TODO: Implement it again, this one expired
         if (args.size() != 2) {
             response = "400;Invalid request format!\n";
             std::cerr << response;
             send(clientSocket, response.c_str(), response.size(), 0);
             return;
         }
-        User* user = userMng.getUserByName(args[1]);
+        user = userMng.getUserByName(args[1]);
         if (user) {
             response = "200;" + user->getUserName() + ";" + user->getDisplayName() + ";" + user->getStatus() + "\n";
         }
@@ -315,14 +343,16 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
             return;
         }
 
-		User* owner = userMng.getUserByToken(args[1]);
+		owner = userMng.getUserByToken(args[1]);
         conversationName = args[2];
         if (owner) {
             ll conversationID = conversationMng.createConversation(owner, conversationName);
             response = "200;" + to_string(conversationID) + "\n";
+			owner->getUserSocket().sendResponse(response);
         }
         else {
             response = "401;Invalid token!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
 		}
 
 		break;
@@ -340,9 +370,11 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
 
         if (owner && conversationMng.deleteConversation(owner, conversationID)) {
             response = "200;Conversation deleted successfully!\n";
+			owner->getUserSocket().sendResponse(response);
         }
         else {
 			response = "401;Invalid token or conversation ID!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
 		}
 		break;
     case LEAVE_CONVERSATION:
@@ -357,9 +389,11 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
         conversationID = std::stoll(args[2]);
         if (user && conversationMng.leaveConversation(user, conversationID)) {
             response = "200;Left conversation successfully!\n";
+			user->getUserSocket().sendResponse(response);
         }
         else {
             response = "401;Invalid token or conversation ID!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
 		}
         break;
     case SEND_MESSAGE:
@@ -380,10 +414,12 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
                 else {
                     response = "404;Conversation not found!\n";
 		      }
+			  user->getUserSocket().sendResponse(response);
         }
         else {
 			response = "401;Invalid token or conversation ID!\n";
-            }
+			send(clientSocket, response.c_str(), response.size(), 0);
+        }
 		break;
     case EDIT_MESSAGE:
         if (args.size() != 5) {
@@ -400,9 +436,11 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
 
         if (user && conversationMng.editMessage(user, conversationID, messageID, newMessage)) {
             response = "200;Message edited successfully!\n";
+			user->getUserSocket().sendResponse(response);
         }
         else {
 			response = "401;Invalid token or conversation ID or message ID!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
         }
 		break;
     case DELETE_MESSAGE:
@@ -419,13 +457,14 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
         
         if (user && conversationMng.deleteMessage(user, conversationID, messageID)) {
             response = "200;Message deleted successfully!\n";
+			user->getUserSocket().sendResponse(response);
         }
         else {
             response = "401;Invalid token, conversation ID, or message ID!\n";
+			send(clientSocket, response.c_str(), response.size(), 0);
         }
         break;
-
-    case GET_CONVERSATION_INFO:
+	case GET_CONVERSATION_INFO://TODO: Implement it again, this one expired
         if (args.size() != 2) {
             response = "400;Invalid request format!\n";
             std::cerr << response;
@@ -433,7 +472,7 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
             return;
         }
         conversationID = std::stoll(args[1]);
-        Conversation* conversation = conversationMng.getConversation(conversationID);
+        conversation = conversationMng.getConversation(conversationID);
         if (conversation) {
             response = "200;" + conversation->getInfo() + "\n"; // Assuming getInfo() returns a string with conversation details
         }
@@ -444,10 +483,9 @@ void CyanusHandle::handleParsedRequest(SOCKET clientSocket, vector<string>& args
 	default:
 		response = "400;Unknown request type!\n";
 		std::cerr << response;
+		send(clientSocket, response.c_str(), response.size(), 0);
 		break;
 	}
-
-	send(clientSocket, response.c_str(), response.size(), 0);
 }
 
 bool CyanusHandle::stop() {

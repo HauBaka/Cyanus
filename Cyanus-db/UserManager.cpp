@@ -1,3 +1,4 @@
+#define _HAS_STD_BYTE 0
 #include "UserManager.h"
 
 #include "Utils.h"
@@ -70,8 +71,6 @@ bool UserManager::removeUser(User* user) {
 			conversation->removeMember(user);
 		}
 	}
-
-	delete user; // Free memory
 	return 1;
 }
 

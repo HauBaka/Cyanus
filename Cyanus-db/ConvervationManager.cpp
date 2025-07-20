@@ -1,3 +1,4 @@
+#define _HAS_STD_BYTE 0
 #include "ConversationManager.h"
 #include "Utils.h"
 #include "UserManager.h"

@@ -1,4 +1,5 @@
 #ifndef _CONVERSATIONMANAGER_H_
+#define _HAS_STD_BYTE 0
 #define _CONVERSATIONMANAGER_H_
 #include "Conversation.h"
 #include "AVLTree.h"
