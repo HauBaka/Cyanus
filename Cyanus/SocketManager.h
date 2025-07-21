@@ -16,7 +16,7 @@ public:
     bool connectToServer(const std::string& ipAddress, int port);
     void disconnect();
 
-    bool sendMessage(const std::string& message, std::string& response);
+    string sendMessage(const std::string& message);
 
 private:
     SOCKET clientSocket;

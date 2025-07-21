@@ -1,7 +1,7 @@
 #ifndef _COMMAND_INPUT_H_
 #define _COMMAND_INPUT_H_
-#include <queue>
 #include <string>
+#include <queue>
 using namespace std;
 
 class CommandInput {
@@ -15,6 +15,10 @@ public:
 	void execute();
 	void addToLogs(const string& s);
 	void printLogs();
+	vector<string>& parseRawRequest();
+	string toRequestString(vector<string>& args);
 };
+
+
 
 #endif

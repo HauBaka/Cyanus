@@ -40,32 +40,27 @@ void SocketManager::disconnect()
         cerr << "Socket is not connected!" << endl;
 	}
 }
-
-bool SocketManager::sendMessage(const std::string& message, std::string& response)
+//Return format: "status code;message"
+string SocketManager::sendMessage(const std::string& message)
 {
     if (clientSocket == INVALID_SOCKET) {
-        cerr << "Socket is not connected!" << endl;
-        return false;
+		return "0;Socket is not connected!";
     }
     // Send the message to the server
     int result = send(clientSocket, message.c_str(), message.size(), 0);
     if (result == SOCKET_ERROR) {
-        cerr << "Send failed: " << WSAGetLastError() << endl;
-        return false;
+        return "0;Send failed";
     }
     // Receive the response from the server
     char buffer[512];
     result = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
     if (result > 0) {
         buffer[result] = '\0'; // Null-terminate the received data
-        response = std::string(buffer);
-        return true;
+        return std::string(buffer);
     } else if (result == 0) {
-        cerr << "Connection closed by server." << endl;
-        return false;
+        return "0;Connection closed by server.";
     } else {
-        cerr << "Receive failed: " << WSAGetLastError() << endl;
-        return false;
+        return "0;Receive failed";
 	}
 }
 

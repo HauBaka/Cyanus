@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -128,27 +128,42 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CommandInput.cpp" />
+    <ClCompile Include="CommandProcessor.cpp" />
+    <ClCompile Include="Conversation.cpp" />
     <ClCompile Include="ConversationPanel.cpp" />
     <ClCompile Include="Cyanus.cpp" />
     <ClCompile Include="DrawingUtils.cpp" />
     <ClCompile Include="FriendsPanel.cpp" />
+    <ClCompile Include="Message.cpp" />
     <ClCompile Include="SocketManager.cpp" />
     <ClCompile Include="terminalUtils.cpp" />
     <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="UserManager.cpp" />
     <ClCompile Include="UserPanel.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AVLTree.h" />
     <ClInclude Include="CommandInput.h" />
+    <ClInclude Include="CommandProcessor.h" />
+    <ClInclude Include="Conversation.h" />
     <ClInclude Include="ConversationPanel.h" />
     <ClInclude Include="Cyanus.h" />
+    <ClInclude Include="DataManager.h" />
     <ClInclude Include="DrawingUtils.h" />
     <ClInclude Include="FriendsPanel.h" />
+    <ClInclude Include="Message.h" />
     <ClInclude Include="SocketManager.h" />
     <ClInclude Include="terminalUtils.h" />
     <ClInclude Include="UIManager.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="UserManager.h" />
     <ClInclude Include="UserPanel.h" />
     <ClInclude Include="Utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AVLTree.tpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

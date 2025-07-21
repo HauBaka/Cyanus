@@ -1,8 +1,10 @@
 #ifndef _CYANUS_H_
 #define _CYANUS_H_
 #include "SocketManager.h"
+#include "UserManager.h"
 class Cyanus {
 private:
+	UserManager user;
 	SocketManager socketManager;
 	Cyanus();
 	Cyanus(const Cyanus&) = delete;
@@ -14,5 +16,6 @@ public:
 	}
 	void run();
 	SocketManager& getSocketManager();
+	UserManager& getUserManager();
 };
 #endif
