@@ -15,7 +15,7 @@ public:
 	void execute();
 	void addToLogs(const string& s);
 	void printLogs();
-	vector<string>& parseRawRequest();
+	vector<string> parseRawRequest();
 	string toRequestString(vector<string>& args);
 };
 

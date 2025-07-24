@@ -72,7 +72,7 @@ bool CyanusHandle::start(const int port) {
 		// 6. Create a new thread to handle the client
         thread([this, clientSocket]() {
             this->handleClient(clientSocket);
-            closesocket(clientSocket);
+            //closesocket(clientSocket);
             }).detach();
     }
 
@@ -81,9 +81,10 @@ bool CyanusHandle::start(const int port) {
 
 void CyanusHandle::handleClient(SOCKET clientSocket) {
     char buffer[1024];
+	cout << "[CyanusDB] A client connected.\n";
     while (true) {
         memset(buffer, 0, sizeof(buffer));
-        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
+        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer)-1, 0);
         if (bytesReceived <= 0) break;
 
         std::string request(buffer);
@@ -97,6 +98,7 @@ void CyanusHandle::handleClient(SOCKET clientSocket) {
 		// Handle the parsed request
 		handleParsedRequest(clientSocket, args);
     }
+	std::cout << "[CyanusDB] A client disconnected.\n";
 }
 
 vector<string> CyanusHandle::parseRawRequest(const string& request) {

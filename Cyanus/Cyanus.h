@@ -4,9 +4,8 @@
 #include "UserManager.h"
 class Cyanus {
 private:
-	UserManager user;
 	SocketManager socketManager;
-	Cyanus();
+	Cyanus() {};
 	Cyanus(const Cyanus&) = delete;
 	Cyanus& operator=(const Cyanus&) = delete;
 public:

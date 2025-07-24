@@ -1,4 +1,5 @@
 #include "CommandProcessor.h"
+#include "terminalUtils.h"
 #include "Cyanus.h"
 string CommandProcessor::processCommand(vector<string>& args)
 {
@@ -35,7 +36,10 @@ string CommandProcessor::processCommand(vector<string>& args)
 		response = Cyanus::getInstance().
 			getSocketManager().sendMessage(
 				"LOGIN;" + args[1] + ";" + args[2]);
+		
+		TerminalUtils::GotoXY(0, 0);
 
+		cout << response << endl;
 		parsedResponse = parseRawResponse(response);
 		if (parsedResponse.size() < 2) {
 			return "Server response: " + response;
@@ -58,6 +62,21 @@ string CommandProcessor::processCommand(vector<string>& args)
 			return "Invalid command format. Use: /change_password <oldPassword> <newPassword>";
 		}
 		break;
+	case CREATE_CONVERSATION:
+		if (args.size() != 2) {
+			return "Invalid command format. Use: /create_conversation <conversationName>";
+		}
+		response = Cyanus::getInstance().
+			getSocketManager().sendMessage(
+				"CREATE_CONVERSATION;" + args[1]);
+		parsedResponse = parseRawResponse(response);
+		if (parsedResponse.size() < 2) {
+			return "Server response: " + response;
+		}
+		if (parsedResponse[0] != "200") {
+			return "Conversation creation failed: " + parsedResponse[1];
+		}
+		return "Conversation created successfully!";
 	default:
 		return "Unknown command or invalid format.";
 	}

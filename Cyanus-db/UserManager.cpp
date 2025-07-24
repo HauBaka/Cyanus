@@ -149,6 +149,12 @@ bool UserManager::changeUserName(User* user, const string& newUsername)
 	//Update userDB
 	userDB.remove(oldUsername);
 	userDB.add(userDB.createNode(user, newUsername));
+	//Update tokenDB
+	string token = user->getToken();
+	if (!token.empty()) {
+		tokenDB.remove(token);
+		tokenDB.add(tokenDB.createNode(newUsername, token));
+	}
 	//Update conversationDB
 	auto convTreeNode = conversationDB.findNodeByKey(oldUsername);
 	if (convTreeNode) {

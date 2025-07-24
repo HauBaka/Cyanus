@@ -70,7 +70,7 @@ void CommandInput::printLogs() {
 	}
 }
 
-vector<string>& CommandInput::parseRawRequest()
+vector<string> CommandInput::parseRawRequest()
 {
 	vector<string> args;
 	if (input.empty() || input[0] != '/') return args;

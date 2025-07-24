@@ -11,9 +11,14 @@ int main() {
 }
 
 void Cyanus::run() {
+    if (!getSocketManager().connectToServer("127.0.0.1", 6969)) {
+        cerr << "Failed to connect to server." << endl;
+        return;
+    }
+
     TerminalUtils::SetUpWindow();
 
-    getSocketManager().connectToServer("127.0.0.1", 6969);
+
 
     UIManager uiManager;
     uiManager.drawUI();
@@ -38,4 +43,8 @@ SocketManager& Cyanus::getSocketManager() {
 	return socketManager;
 }
 
+UserManager& Cyanus::getUserManager()
+{
+    return UserManager::getInstance();
+}
 

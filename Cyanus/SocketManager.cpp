@@ -3,6 +3,7 @@
 
 SocketManager::SocketManager()
 {
+	clientSocket = INVALID_SOCKET; 
 }
 
 bool SocketManager::connectToServer(const std::string& ipAddress, int port)
@@ -12,21 +13,40 @@ bool SocketManager::connectToServer(const std::string& ipAddress, int port)
     int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (result != 0) {
         cerr << "WSAStartup failed: " << result << endl;
-        return 1;
+        return false;
     }
 
     // 2. Create socket
-    SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+    DWORD timeout = 0; 
+
+    setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout));
     if (clientSocket == INVALID_SOCKET) {
         cerr << "Socket creation failed! Code: " << WSAGetLastError() << endl;
         WSACleanup();
-        return 1;
+        return false;
     }
     
+
+    // 3. Setup server address
+    sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(port); 
+    inet_pton(AF_INET, ipAddress.c_str(), &serverAddr.sin_addr);
+    
+    // 4. Connect to server
+    if (connect(clientSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        cerr << "Connection failed! Code: " << WSAGetLastError() << endl;
+        closesocket(clientSocket);
+        WSACleanup();
+        return false;
+    }
+
 	//Keep the connection alive
     thread([this]() {
-        keepConnectionAlive();
 		}).detach();
+    return true;
 }
 
 void SocketManager::disconnect()
@@ -41,18 +61,23 @@ void SocketManager::disconnect()
 	}
 }
 //Return format: "status code;message"
-string SocketManager::sendMessage(const std::string& message)
+string SocketManager::sendMessage(const std::string message)
 {
+    if (message.empty()) {
+        return "0;Message is empty!";
+	}
     if (clientSocket == INVALID_SOCKET) {
 		return "0;Socket is not connected!";
     }
     // Send the message to the server
     int result = send(clientSocket, message.c_str(), message.size(), 0);
-    if (result == SOCKET_ERROR) {
-        return "0;Send failed";
-    }
+  //  if (result == SOCKET_ERROR) {
+  //      closesocket(clientSocket);
+		//clientSocket = INVALID_SOCKET;
+  //      return "0;Send failed";
+  //  }
     // Receive the response from the server
-    char buffer[512];
+    char buffer[1024];
     result = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
     if (result > 0) {
         buffer[result] = '\0'; // Null-terminate the received data
